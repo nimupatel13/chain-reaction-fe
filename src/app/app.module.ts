@@ -9,10 +9,11 @@ import { HttpClientModule } from "@angular/common/http";
 import { DialogOverviewExampleDialog } from "./app.component";
 import { DialogQueryExampleDialog } from "./app.component";
 import { ClipboardModule } from "ngx-clipboard";
-import { GameBoardComponent } from "./_services/game-board/game-board.component";
-import { HomeComponent } from "./_services/home/home.component";
-import { WebsocketService } from "./websocket.service";
+import { GameBoardComponent } from "./game-board/game-board.component";
+import { HomeComponent } from "./home/home.component";
+import { WebsocketService } from "./_services/websocket.service";
 import { FormsModule } from "@angular/forms";
+import { GameService } from "./_services/game.service";
 
 @NgModule({
   declarations: [
@@ -20,7 +21,7 @@ import { FormsModule } from "@angular/forms";
     DialogOverviewExampleDialog,
     DialogQueryExampleDialog,
     GameBoardComponent,
-    HomeComponent
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,10 +30,10 @@ import { FormsModule } from "@angular/forms";
     MaterialModule,
     HttpClientModule,
     FormsModule,
-    ClipboardModule
+    ClipboardModule,
   ],
   entryComponents: [DialogOverviewExampleDialog, DialogQueryExampleDialog],
-  providers: [WebsocketService],
-  bootstrap: [AppComponent]
+  providers: [WebsocketService, GameService],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

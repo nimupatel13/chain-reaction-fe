@@ -1,0 +1,24 @@
+.sketch-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1em;
+}
+
+mat-grid-tile {
+  background: lightblue;
+}
+
+.red {
+  background: red;
+}
+.blue {
+  background: blue;
+}
+.container {
+  width: 40%;
+  height: 40%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+}

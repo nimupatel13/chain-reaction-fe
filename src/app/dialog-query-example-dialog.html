@@ -1,13 +1,20 @@
-<h1 mat-dialog-title>Enter Game ID</h1>
+<h1 mat-dialog-title>Join Game</h1>
 <!-- <div mat-dialog-content>
   <p>What's your favorite animal?</p>
    -->
 <!-- </div> -->
 <mat-form-field>
-  <input matInput [(ngModel)]="InstanceID" />
+  <input matInput [(ngModel)]="roomname" placeholder="Room Name" />
+</mat-form-field>
+<br />
+<mat-form-field>
+  <input matInput [(ngModel)]="username" placeholder="User Name" />
+</mat-form-field>
+<br />
+<mat-form-field>
+  <input matInput [(ngModel)]="color" placeholder="color" />
 </mat-form-field>
 <div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">No Thanks</button>
   <button mat-button (click)="JOIN()">
     JOIN
   </button>

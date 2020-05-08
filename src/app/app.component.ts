@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.scss"]
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
   title = "chain-reaction-fe";
@@ -16,7 +16,7 @@ export interface DialogData {
 }
 @Component({
   selector: "dialog-overview-example-dialog",
-  templateUrl: "dialog-overview-example-dialog.html"
+  templateUrl: "dialog-overview-example-dialog.html",
 })
 export class DialogOverviewExampleDialog {
   constructor(
@@ -36,20 +36,26 @@ export class DialogOverviewExampleDialog {
 }
 @Component({
   selector: "dialog-query-example-dialog",
-  templateUrl: "dialog-query-example-dialog.html"
+  templateUrl: "dialog-query-example-dialog.html",
 })
 export class DialogQueryExampleDialog {
   constructor(
     public dialogRef: MatDialogRef<DialogQueryExampleDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData
   ) {}
-  InstanceID: string;
+  roomname: string;
+  username: string;
+  color: string;
   onNoClick(): void {
     this.dialogRef.close();
   }
   JOIN() {
-    console.log(this.InstanceID);
-    return this.InstanceID;
-    this.dialogRef.close();
+    // this.dialogRef.close();
+    let joinObj = {};
+    joinObj["roomname"] = this.roomname;
+    joinObj["username"] = this.username;
+    joinObj["color"] = this.color;
+    console.log(joinObj);
+    this.dialogRef.close(joinObj);
   }
 }
