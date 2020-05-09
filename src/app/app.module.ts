@@ -7,7 +7,11 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MaterialModule } from "./material/material.module";
 import { HttpClientModule } from "@angular/common/http";
 import { DialogOverviewExampleDialog } from "./app.component";
-import { DialogQueryExampleDialog } from "./app.component";
+import {
+  DialogQueryExampleDialog,
+  CreateGame,
+  WinnerDialog,
+} from "./app.component";
 import { ClipboardModule } from "ngx-clipboard";
 import { GameBoardComponent } from "./game-board/game-board.component";
 import { HomeComponent } from "./home/home.component";
@@ -22,6 +26,8 @@ import { GameService } from "./_services/game.service";
     DialogQueryExampleDialog,
     GameBoardComponent,
     HomeComponent,
+    CreateGame,
+    WinnerDialog,
   ],
   imports: [
     BrowserModule,
@@ -32,7 +38,12 @@ import { GameService } from "./_services/game.service";
     FormsModule,
     ClipboardModule,
   ],
-  entryComponents: [DialogOverviewExampleDialog, DialogQueryExampleDialog],
+  entryComponents: [
+    DialogOverviewExampleDialog,
+    DialogQueryExampleDialog,
+    CreateGame,
+    WinnerDialog,
+  ],
   providers: [WebsocketService, GameService],
   bootstrap: [AppComponent],
 })

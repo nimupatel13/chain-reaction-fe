@@ -1,19 +1,39 @@
-<mat-toolbar color="primary">
-  <span style="margin-left: 10px;">Chain Reaction</span>
+<mat-toolbar style="overflow: auto;" color="primary">
+  <span style="float: left;">Chain Reaction</span>
+  <span style="right: 0; position: absolute; padding-right: 15px;"
+    >{{ currTurn }}'s Turn</span
+  >
 </mat-toolbar>
 
 <div class="container">
-  <mat-grid-list cols="8" rows="9" rowHeight="9:8">
+  <mat-grid-list [cols]="cols" rowHeight="1:1">
     <div *ngFor="let item of [].constructor(72); let i = index">
       <mat-grid-tile
-        [ngClass]="true ? color : ''"
+        [ngClass]="true ? color[i] : ''"
         *ngIf="cnt[i] === 1"
         (click)="check(i)"
+        style="color: white;"
         >1</mat-grid-tile
       >
-      <mat-grid-tile *ngIf="cnt[i] === 0" (click)="check(i)"></mat-grid-tile>
-      <mat-grid-tile *ngIf="cnt[i] === 2" (click)="check(i)">2</mat-grid-tile>
-      <mat-grid-tile *ngIf="cnt[i] === 3" (click)="check(i)">3</mat-grid-tile>
+      <mat-grid-tile
+        [ngClass]="true ? color[i] : ''"
+        *ngIf="cnt[i] === 0"
+        (click)="check(i)"
+      ></mat-grid-tile>
+      <mat-grid-tile
+        [ngClass]="true ? color[i] : ''"
+        *ngIf="cnt[i] === 2"
+        (click)="check(i)"
+        style="color: white;"
+        >2</mat-grid-tile
+      >
+      <mat-grid-tile
+        [ngClass]="true ? color[i] : ''"
+        *ngIf="cnt[i] === 3"
+        (click)="check(i)"
+        style="color: white;"
+        >3</mat-grid-tile
+      >
     </div>
   </mat-grid-list>
 </div>

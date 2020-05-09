@@ -4,6 +4,7 @@ import { MatDialog } from "@angular/material";
 import {
   DialogOverviewExampleDialog,
   DialogQueryExampleDialog,
+  CreateGame,
 } from "src/app/app.component";
 import * as Rx from "rxjs";
 import { share } from "rxjs/operators";
@@ -30,31 +31,14 @@ export class HomeComponent implements OnInit {
     private router: Router
   ) {}
 
-  createNew() {
-    this.http
-      .get("http://localhost:8080/new?players_count=2&dimension=4")
-      .subscribe((res) => {
-        console.log(res["Game Instance"]["InstanceID"]);
-        confirm("Are you sure to delete " + res["Game Instance"]["InstanceID"]);
-      });
-  }
-
   openDialog(): void {
-    this.http
-      .get("http://localhost:8080/new?players_count=2&dimension=4")
-      .subscribe((res) => {
-        console.log(res["GameRoomName"]);
-        // confirm("Are you sure to delete " + res["Game Instance"]["InstanceID"]);
-        const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
-          width: "500px",
-          data: { name: res["GameRoomName"], animal: "Harami" },
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
-          console.log("The dialog was closed");
-          // this.animal = result;
-        });
-      });
+    const dialogRef = this.dialog.open(CreateGame, {
+      width: "500px",
+    });
+    dialogRef.afterClosed().subscribe((res) => {
+      console.log("Dimension...", res);
+      sessionStorage.setItem("dimension", res);
+    });
   }
 
   joinGame() {
@@ -88,7 +72,16 @@ export class HomeComponent implements OnInit {
         )
         .subscribe(
           (res) => {
-            console.log(res);
+            let idx = res["game instance"]["current_turn"];
+            // console.log(res["game instance"]["AllPlayers"][idx]["UserName"]);
+            sessionStorage.setItem(
+              "currUser",
+              res["game instance"]["AllPlayers"][idx]["UserName"]
+            );
+            sessionStorage.setItem(
+              "dimension",
+              res["game instance"]["Board"].length
+            );
             resolve(res);
           },
           (err) => {

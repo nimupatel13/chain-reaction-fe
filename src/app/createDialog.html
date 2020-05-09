@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>Create New Room</h1>
+<mat-form-field>
+  <input matInput placeholder="Board Dimension" [(ngModel)]="dimension" />
+</mat-form-field>
+<br />
+<mat-form-field>
+  <input matInput placeholder="No of Players" [(ngModel)]="players" />
+</mat-form-field>
+<div mat-dialog-actions>
+  <button mat-button ngxClipboard (click)="Create()">
+    Create
+  </button>
+</div>

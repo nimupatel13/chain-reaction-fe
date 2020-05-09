@@ -1,6 +1,7 @@
 import { Component, Inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-root",
@@ -27,11 +28,30 @@ export class DialogOverviewExampleDialog {
   onNoClick(): void {
     this.dialogRef.close();
   }
+  copy() {
+    this.dialogRef.close();
+  }
   copyInputMessage(inputElement) {
     console.log("here " + inputElement);
     inputElement.select();
     document.execCommand("copy");
     inputElement.setSelectionRange(0, 0);
+  }
+}
+@Component({
+  selector: "winnerDialog",
+  templateUrl: "winnerDialog.html",
+})
+export class WinnerDialog {
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private router: Router
+  ) {}
+
+  Ok() {
+    this.router.navigate(["home"]);
+    this.dialogRef.close();
   }
 }
 @Component({
@@ -57,5 +77,42 @@ export class DialogQueryExampleDialog {
     joinObj["color"] = this.color;
     console.log(joinObj);
     this.dialogRef.close(joinObj);
+  }
+}
+
+@Component({
+  selector: "createDialog",
+  templateUrl: "createDialog.html",
+})
+export class CreateGame {
+  constructor(
+    public dialogRef: MatDialogRef<CreateGame>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private http: HttpClient,
+    private dialog: MatDialog
+  ) {}
+  players: string;
+  dimension: string;
+  Create() {
+    this.http
+      .get(
+        "http://localhost:8080/new?players_count=" +
+          this.players +
+          "&dimension=" +
+          this.dimension
+      )
+      .subscribe(
+        (res) => {
+          console.log(res);
+          const dialogBox = this.dialog.open(DialogOverviewExampleDialog, {
+            width: "500px",
+            data: { name: res["GameRoomName"] },
+          });
+          this.dialogRef.close(this.dimension);
+        },
+        (err) => {
+          console.log("Error creating game");
+        }
+      );
   }
 }

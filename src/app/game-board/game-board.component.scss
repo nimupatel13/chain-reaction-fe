@@ -4,7 +4,12 @@
   align-items: center;
   margin: 1em;
 }
-
+.header .turn {
+  float: right;
+}
+.header .name {
+  float: left;
+}
 mat-grid-tile {
   background: lightblue;
 }
