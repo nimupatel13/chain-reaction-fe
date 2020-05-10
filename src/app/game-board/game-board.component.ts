@@ -52,10 +52,10 @@ export class GameBoardComponent implements OnInit {
       }
     }
     if (this.map.size == 3) {
-      let winner = this.map.get(3).winner;
+      let winner = this.map.get(3).user_name;
       const dialogRef = this.dialog.open(WinnerDialog, {
         width: "500px",
-        data: { name: winner["UserName"] + " won" },
+        data: { name: winner + " won" },
       });
     }
   }
