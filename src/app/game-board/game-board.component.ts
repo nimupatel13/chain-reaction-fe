@@ -4,6 +4,14 @@ import p5 from "p5";
 import { GameService } from "../_services/game.service";
 import { MatDialog } from "@angular/material";
 import { WinnerDialog } from "../app.component";
+import { resolve } from "url";
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+} from "@angular/animations";
 // const user = sessionStorage.getItem("user");
 // const color = sessionStorage.getItem("color");
 // const room = sessionStorage.getItem("roomname");
@@ -15,24 +23,41 @@ import { WinnerDialog } from "../app.component";
   selector: "app-game-board",
   templateUrl: "./game-board.component.html",
   styleUrls: ["./game-board.component.scss"],
+  animations: [
+    trigger("heroState", [
+      state(
+        "black",
+        style({
+          background: "lightblue",
+        })
+      ),
+      state(
+        "green",
+        style({
+          background: "red",
+        })
+      ),
+      transition("black => green", animate("500ms steps(5)")),
+      transition("green => black", animate("500ms steps(5)")),
+    ]),
+  ],
 })
 export class GameBoardComponent implements OnInit {
   private ws: WebSocketSubject<any>;
   constructor(private dialog: MatDialog) {
-    let user = sessionStorage.getItem("user");
-    let color = sessionStorage.getItem("color");
-    let room = sessionStorage.getItem("roomname");
-    this.ws = new WebSocketSubject(
-      "ws://localhost:8080/play?username=" + user + "&roomname=" + room
-    );
-
-    this.ws.subscribe(
-      (message) => {
-        console.log("Msg from server...", message);
-        this.renderBoard(message);
-      },
-      (err) => console.log("Error from server...", err)
-    );
+    // let user = sessionStorage.getItem("user");
+    // let color = sessionStorage.getItem("color");
+    // let room = sessionStorage.getItem("roomname");
+    // this.ws = new WebSocketSubject(
+    //   "ws://localhost:8080/play?username=" + user + "&roomname=" + room
+    // );
+    // this.ws.subscribe(
+    //   (message) => {
+    //     console.log("Msg from server...", message);
+    //     this.renderBoard(message);
+    //   },
+    //   (err) => console.log("Error from server...", err)
+    // );
   }
   map = new Map();
   renderBoard(message) {
@@ -66,68 +91,132 @@ export class GameBoardComponent implements OnInit {
   cnt: number[] = [];
   cols: number;
   rows: number;
-  color: string[] = [];
+  color: string[][] = [];
   currTurn: string;
 
   ngOnInit() {
     // this.color = sessionStorage.getItem("color");
-    this.cols = +sessionStorage.getItem("dimension");
-    this.rows = +sessionStorage.getItem("dimension");
+    // this.cols = +sessionStorage.getItem("dimension");
+    // this.rows = +sessionStorage.getItem("dimension");
+    this.cols = 8;
+    this.rows = 8;
     this.grid = [];
     this.currTurn = sessionStorage.getItem("currUser");
     let idx = 0;
     for (let i = 0; i < this.rows; i++) {
       this.grid[i] = [];
+      this.color[i] = new Array(this.cols);
+      this.heroState[i] = [];
       for (let j = 0; j < this.cols; j++) {
         this.grid[i][j] = 0;
         this.cnt[i * this.cols + j] = 0;
+        this.color[i][j] = "lightblue";
+        this.heroState[i][j] = "black";
       }
     }
     // console.log(this.cnt.length + this.grid[0].length);
   }
-  check(i) {
+  blackState: boolean = true;
+  greenState: boolean = false;
+  heroState: string[][] = [];
+  check(i, j) {
+    this.blackState = !this.blackState;
+    this.greenState = !this.greenState;
+    this.heroState[i][j] = "green";
     let user = sessionStorage.getItem("user");
     let color = sessionStorage.getItem("color");
     let row = Math.floor(i / this.cols);
     let col = i % this.cols;
     // console.log(i, i * row + col)
-    console.log(
-      JSON.stringify({ xpos: row, ypos: col, player_username: user })
-    );
-    console.log(this.currTurn);
+    console.log(i, j);
+    // console.log(
+    //   JSON.stringify({ xpos: row, ypos: col, player_username: user })
+    // );
+    this.render(i, j);
+    this.simulate();
+
+    // console.log(this.currTurn);
+    // if (
+    //   this.currTurn === user &&
+    //   (color === this.color[i] ||
+    //     this.color[i] === "" ||
+    //     this.color[i] === undefined)
+    // )
+    //   this.ws.next({ xpos: row, ypos: col, player_username: user });
+  }
+  async simulate() {
+    while (this.queue.length > 0) {
+      let next = this.queue.shift();
+      await this.render(next.row, next.col);
+    }
+  }
+  queue = [];
+  async render(row, col) {
+    let dimension = 7;
     if (
-      this.currTurn === user &&
-      (color === this.color[i] ||
-        this.color[i] === "" ||
-        this.color[i] === undefined)
-    )
-      this.ws.next({ xpos: row, ypos: col, player_username: user });
-    // if (row == 0 || col == 0 || row == this.rows - 1 || col == this.cols - 1) {
-    //   if (
-    //     (row == 0 && col == 0) ||
-    //     (row == 0 && col == this.cols - 1) ||
-    //     (row == this.rows - 1 && col == 0) ||
-    //     (row == this.rows - 1 && col == this.cols - 1)
-    //   ) {
-    //     this.cnt[i] = this.cnt[i] ^ 1;
-    //     this.grid[row][col] = this.cnt[i];
-    //   } else {
-    //     if (this.cnt[i] != 2) {
-    //       this.cnt[i]++;
-    //       this.grid[row][col] = this.cnt[i];
-    //     } else {
-    //       this.cnt[i] = 0;
-    //       this.grid[row][col] = 0;
-    //     }
-    //   }
-    // } else {
-    //   if (this.cnt[i] != 3) {
-    //     this.cnt[i]++;
-    //     this.grid[row][col] = this.cnt[i];
-    //   } else {
-    //     this.cnt[i] = 0;
-    //     this.grid[row][col] = 0;
-    //   }
-    // }
+      (row == 0 && col == 0) ||
+      (row == dimension && col == dimension) ||
+      (row == 0 && col == dimension) ||
+      (row == dimension && col == 0)
+    ) {
+      if (this.grid[row][col] == 1) {
+        this.grid[row][col] = 0;
+        this.color[row][col] = "lightblue";
+        this.heroState[row][col] = "black";
+        await this.pushToQueue(row, col, dimension);
+      } else {
+        this.grid[row][col]++;
+        this.color[row][col] = "red";
+        this.heroState[row][col] = "green";
+        // console.log(this.grid[0][0]);
+      }
+    } else if (row == 0 || row == dimension || col == 0 || col == dimension) {
+      if (this.grid[row][col] == 2) {
+        this.grid[row][col] = 0;
+        this.color[row][col] = "lightblue";
+        this.heroState[row][col] = "black";
+        await this.pushToQueue(row, col, dimension);
+      } else {
+        this.grid[row][col]++;
+        this.color[row][col] = "red";
+        this.heroState[row][col] = "green";
+      }
+    } else {
+      if (this.grid[row][col] == 3) {
+        this.grid[row][col] = 0;
+        this.color[row][col] = "lightblue";
+        this.heroState[row][col] = "black";
+        await this.pushToQueue(row, col, dimension);
+      } else {
+        this.grid[row][col]++;
+        this.color[row][col] = "red";
+        this.heroState[row][col] = "green";
+      }
+    }
+  }
+  async pushToQueue(row, col, dimension) {
+    let promise = new Promise((resolve) => {
+      let cnt = 0;
+      if (row - 1 >= 0) {
+        cnt++;
+        this.queue.push({ row: row - 1, col: col });
+      }
+      if (col - 1 >= 0) {
+        cnt++;
+        this.queue.push({ row: row, col: col - 1 });
+      }
+      if (col + 1 <= dimension) {
+        cnt++;
+        this.queue.push({ row: row, col: col + 1 });
+      }
+      if (row + 1 <= dimension) {
+        cnt++;
+        this.queue.push({ row: row + 1, col: col });
+      }
+      setTimeout(() => {
+        resolve();
+      }, cnt * 200);
+    });
+    return promise;
   }
 }

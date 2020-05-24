@@ -7,33 +7,15 @@
 
 <div class="container">
   <mat-grid-list [cols]="cols" rowHeight="1:1">
-    <div *ngFor="let item of [].constructor(72); let i = index">
-      <mat-grid-tile
-        [ngClass]="true ? color[i] : ''"
-        *ngIf="cnt[i] === 1"
-        (click)="check(i)"
-        style="color: white;"
-        >1</mat-grid-tile
-      >
-      <mat-grid-tile
-        [ngClass]="true ? color[i] : ''"
-        *ngIf="cnt[i] === 0"
-        (click)="check(i)"
-      ></mat-grid-tile>
-      <mat-grid-tile
-        [ngClass]="true ? color[i] : ''"
-        *ngIf="cnt[i] === 2"
-        (click)="check(i)"
-        style="color: white;"
-        >2</mat-grid-tile
-      >
-      <mat-grid-tile
-        [ngClass]="true ? color[i] : ''"
-        *ngIf="cnt[i] === 3"
-        (click)="check(i)"
-        style="color: white;"
-        >3</mat-grid-tile
-      >
+    <div *ngFor="let item of [].constructor(cols); let i = index">
+      <div *ngFor="let item of [].constructor(rows); let j = index">
+        <mat-grid-tile
+          [@heroState]="heroState[i][j]"
+          (click)="check(i, j)"
+          style="color: white;"
+          ><p *ngIf="grid[i][j] != 0">{{ grid[i][j] }}</p></mat-grid-tile
+        >
+      </div>
     </div>
   </mat-grid-list>
 </div>
