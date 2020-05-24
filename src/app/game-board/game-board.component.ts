@@ -23,7 +23,7 @@ export class GameBoardComponent implements OnInit {
     let color = sessionStorage.getItem("color");
     let room = sessionStorage.getItem("roomname");
     this.ws = new WebSocketSubject(
-      "ws://localhost:8080/play?username=" + user + "&roomname=" + room
+      "ws://localhost:8080/games/" + room +"/play?username=" + user
     );
 
     this.ws.subscribe(

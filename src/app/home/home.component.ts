@@ -63,8 +63,7 @@ export class HomeComponent implements OnInit {
       console.log("here");
       this.http
         .get(
-          "http://localhost:8080/join?roomname=" +
-            result.roomname +
+          "http://localhost:8080/games/" + result.roomname + "/join?" +
             "&username=" +
             result.username +
             "&color=" +
@@ -72,15 +71,16 @@ export class HomeComponent implements OnInit {
         )
         .subscribe(
           (res) => {
-            let idx = res["game instance"]["current_turn"];
+            console.log(res)
+            let idx = res["game_instance"]["current_turn"];
             // console.log(res["game instance"]["AllPlayers"][idx]["UserName"]);
             sessionStorage.setItem(
               "currUser",
-              res["game instance"]["AllPlayers"][idx]["UserName"]
+              res["game_instance"]["all_players"][idx]["username"]
             );
             sessionStorage.setItem(
               "dimension",
-              res["game instance"]["Board"].length
+              res["game_instance"]["dimension"]
             );
             resolve(res);
           },
