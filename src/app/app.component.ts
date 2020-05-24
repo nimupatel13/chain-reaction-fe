@@ -106,7 +106,7 @@ export class CreateGame {
           console.log(res);
           const dialogBox = this.dialog.open(DialogOverviewExampleDialog, {
             width: "500px",
-            data: { name: res["GameRoomName"] },
+            data: { name: res["game_roomname"] },
           });
           this.dialogRef.close(this.dimension);
         },
