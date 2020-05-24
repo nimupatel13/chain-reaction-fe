@@ -63,8 +63,7 @@ export class HomeComponent implements OnInit {
       console.log("here");
       this.http
         .get(
-          "http://localhost:8080/join?roomname=" +
-            result.roomname +
+          "http://localhost:8080/games/" + result.roomname + "/join?" +
             "&username=" +
             result.username +
             "&color=" +
