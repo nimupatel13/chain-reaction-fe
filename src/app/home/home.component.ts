@@ -59,28 +59,42 @@ export class HomeComponent implements OnInit {
   }
 
   getCurrentBoard(result) {
+    console.log(
+      encodeURIComponent(
+        "http://localhost:8080/games/" +
+          result.roomname +
+          "/join?" +
+          "&username=" +
+          result.username +
+          "&color=" +
+          result.color
+      )
+    );
     var promise = new Promise((resolve, reject) => {
       console.log("here");
       this.http
         .get(
-          "http://localhost:8080/games/" + result.roomname + "/join?" +
+          "http://localhost:8080/games/" +
+            result.roomname +
+            "/join?" +
             "&username=" +
             result.username +
             "&color=" +
-            result.color
+            encodeURIComponent(result.color)
         )
         .subscribe(
           (res) => {
-            console.log(res)
+            console.log(res);
             let idx = res["game_instance"]["current_turn"];
             // console.log(res["game instance"]["AllPlayers"][idx]["UserName"]);
-            sessionStorage.setItem(
-              "currUser",
-              res["game_instance"]["all_players"][idx]["username"]
-            );
+            sessionStorage.setItem("currUser", result.username);
             sessionStorage.setItem(
               "dimension",
               res["game_instance"]["dimension"]
+            );
+            sessionStorage.setItem(
+              "currTurn",
+              res["game_instance"]["all_players"][0]["username"]
             );
             resolve(res);
           },
