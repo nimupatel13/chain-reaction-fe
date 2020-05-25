@@ -11,6 +11,7 @@ import {
   transition,
   animate,
 } from "@angular/animations";
+import { resolve } from "url";
 // const user = sessionStorage.getItem("user");
 // const color = sessionStorage.getItem("color");
 // const room = sessionStorage.getItem("roomname");
@@ -42,7 +43,7 @@ import {
           background: "#3D5AFE",
         })
       ),
-      transition("* <=> *", animate("500ms steps(5)")),
+      transition("* => *", animate("500ms steps(5)")),
     ]),
   ],
 })
@@ -65,22 +66,34 @@ export class GameBoardComponent implements OnInit {
     );
   }
   map = new Map();
-  renderBoard(message) {
-    console.log(message.states);
-    for (let i = 0; i < message.states.length; i += 3) {
-      if (message.states[i] == -1) {
-        console.log("Done updating...");
-      } else {
-        this.updateBoard(
-          message.states[i],
-          message.states[i + 1],
-          message.states[i + 2] == 0 ? "black" : message.color,
-          message.states[i + 2]
-        );
+  async renderBoard(message) {
+    console.log(message);
+    if (message.msg_type == 2) {
+      for (let i = 0; i < message.states.length; i += 3) {
+        if (message.states[i] == -1) {
+          console.log("Done updating...");
+          await this.updateBoard();
+          i -= 2;
+        } else {
+          let obj = {};
+          obj["row"] = message.states[i];
+          obj["col"] = message.states[i + 1];
+          obj["color"] = message.states[i + 2] == 0 ? "black" : message.color;
+          obj["count"] = message.states[i + 2];
+          this.queue.push(obj);
+        }
       }
+      this.updateBoard();
+      this.currTurn = message.new_currturn;
     }
-    this.currTurn = message.new_currturn;
+    if (message.msg_type == 3) {
+      this.dialog.open(WinnerDialog, {
+        width: "500px",
+        data: { name: message.user_name + " won" },
+      });
+    }
   }
+  queue = [];
   canvas: any;
   width = 400;
   height = 400;
@@ -116,8 +129,17 @@ export class GameBoardComponent implements OnInit {
     if (this.user === this.currTurn)
       this.ws.next({ xpos: i, ypos: j, player_username: this.currTurn });
   }
-  updateBoard(row, col, color, count) {
-    this.grid[row][col] = count;
-    this.colorState[row][col] = color;
+  updateBoard() {
+    var promise = new Promise((resolve) => {
+      while (this.queue.length > 0) {
+        let move = this.queue.shift();
+        this.grid[move.row][move.col] = move.count;
+        this.colorState[move.row][move.col] = move.color;
+      }
+      setTimeout(() => {
+        resolve();
+      }, 300);
+    });
+    return promise;
   }
 }
