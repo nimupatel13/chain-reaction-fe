@@ -45,12 +45,10 @@ export class DialogOverviewExampleDialog {
 export class WinnerDialog {
   constructor(
     public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private router: Router
+    @Inject(MAT_DIALOG_DATA) public data: DialogData
   ) {}
 
   Ok() {
-    this.router.navigate(["home"]);
     this.dialogRef.close();
   }
 }
@@ -93,6 +91,7 @@ export class CreateGame {
   ) {}
   players: string;
   dimension: string;
+  username: string;
   Create() {
     this.http
       .get(
@@ -108,7 +107,11 @@ export class CreateGame {
             width: "500px",
             data: { name: res["game_roomname"] },
           });
-          this.dialogRef.close(this.dimension);
+          this.dialogRef.close({
+            dimension: this.dimension,
+            username: this.username,
+            roomname: res["game_roomname"],
+          });
         },
         (err) => {
           console.log("Error creating game");

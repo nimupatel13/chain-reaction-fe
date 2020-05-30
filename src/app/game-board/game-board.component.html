@@ -6,10 +6,11 @@
 </mat-toolbar>
 
 <div class="container">
-  <mat-grid-list [cols]="cols" rowHeight="1:1">
+  <mat-grid-list [cols]="cols" rowHeight="1:1" [gutterSize]="'10px'">
     <div *ngFor="let item of [].constructor(cols); let i = index">
       <div *ngFor="let item of [].constructor(rows); let j = index">
         <mat-grid-tile
+          [style.border]="'1px solid ' + currColor"
           [@colorState]="colorState[i][j]"
           (click)="check(i, j)"
           style="color: white;"

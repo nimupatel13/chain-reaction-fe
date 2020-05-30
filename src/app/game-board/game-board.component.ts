@@ -12,6 +12,7 @@ import {
   animate,
 } from "@angular/animations";
 import { resolve } from "url";
+import { Router } from "@angular/router";
 // const user = sessionStorage.getItem("user");
 // const color = sessionStorage.getItem("color");
 // const room = sessionStorage.getItem("roomname");
@@ -43,13 +44,49 @@ import { resolve } from "url";
           background: "#3D5AFE",
         })
       ),
-      transition("* => *", animate("500ms steps(5)")),
+      state(
+        "#37474F",
+        style({
+          background: "#37474F",
+        })
+      ),
+      state(
+        "#00E5FF",
+        style({
+          background: "#00E5FF",
+        })
+      ),
+      state(
+        "#1DE9B6",
+        style({
+          background: "#1DE9B6",
+        })
+      ),
+      state(
+        "#00E676",
+        style({
+          background: "#00E676",
+        })
+      ),
+      state(
+        "#FFEA00",
+        style({
+          background: "#FFEA00",
+        })
+      ),
+      state(
+        "#FF9100",
+        style({
+          background: "#FF9100",
+        })
+      ),
+      transition("* => *", animate("300ms steps(3)")),
     ]),
   ],
 })
 export class GameBoardComponent implements OnInit {
   private ws: WebSocketSubject<any>;
-  constructor(private dialog: MatDialog) {
+  constructor(private dialog: MatDialog, private router: Router) {
     let user = sessionStorage.getItem("user");
     let color = sessionStorage.getItem("color");
     let room = sessionStorage.getItem("roomname");
@@ -85,14 +122,18 @@ export class GameBoardComponent implements OnInit {
       }
       this.updateBoard();
       this.currTurn = message.new_currturn;
+      this.currColor = message.new_curr_color;
     }
     if (message.msg_type == 3) {
-      this.dialog.open(WinnerDialog, {
+      let dialogRef = this.dialog.open(WinnerDialog, {
         width: "500px",
         data: { name: message.user_name + " won" },
       });
+
+      dialogRef.afterClosed().subscribe(() => this.router.navigate(["home"]));
     }
   }
+  currColor: string = "black";
   queue = [];
   canvas: any;
   width = 400;
@@ -112,6 +153,7 @@ export class GameBoardComponent implements OnInit {
     this.grid = [];
     this.user = sessionStorage.getItem("currUser");
     this.currTurn = sessionStorage.getItem("currTurn");
+    this.currColor = sessionStorage.getItem("currColor");
     let idx = 0;
     for (let i = 0; i < this.rows; i++) {
       this.grid[i] = [];
@@ -125,9 +167,15 @@ export class GameBoardComponent implements OnInit {
     // console.log(this.cnt.length + this.grid[0].length);
   }
   check(i, j) {
+    let color = sessionStorage.getItem("color");
     console.log({ xpos: i, ypos: j, player_username: this.currTurn });
-    if (this.user === this.currTurn)
+    if (
+      this.user === this.currTurn &&
+      (color === this.colorState[i][j] || this.colorState[i][j] === "black")
+    ) {
       this.ws.next({ xpos: i, ypos: j, player_username: this.currTurn });
+      console.log("msg sent to server...");
+    }
   }
   updateBoard() {
     var promise = new Promise((resolve) => {
@@ -137,9 +185,17 @@ export class GameBoardComponent implements OnInit {
         this.colorState[move.row][move.col] = move.color;
       }
       setTimeout(() => {
+        this.playaudio();
         resolve();
       }, 300);
     });
     return promise;
+  }
+
+  playaudio() {
+    let audio = new Audio();
+    audio.src = "../../assets/Explosion+1.wav";
+    audio.load();
+    audio.play();
   }
 }

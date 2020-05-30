@@ -4,6 +4,9 @@
   align-items: center;
   margin: 1em;
 }
+// .mat-grid-tile {
+//   border: solid 2px #000;
+// }
 .header .turn {
   float: right;
 }
@@ -15,7 +18,7 @@ mat-grid-tile {
 }
 
 .red {
-  background: red;
+  border: solid 2px #ff1744;
 }
 .blue {
   background: blue;

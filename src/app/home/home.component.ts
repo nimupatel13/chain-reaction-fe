@@ -37,7 +37,13 @@ export class HomeComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((res) => {
       console.log("Dimension...", res);
-      sessionStorage.setItem("dimension", res);
+      sessionStorage.setItem("dimension", res.dimension);
+      let result = { username: res.username, roomname: res.roomname };
+      this.getCurrentBoard(result).then((res) => {
+        sessionStorage.setItem("user", result.username);
+        sessionStorage.setItem("roomname", result.roomname);
+        this.router.navigate(["board"]);
+      });
     });
   }
 
@@ -48,10 +54,9 @@ export class HomeComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(result);
+      // console.log(result);
       this.getCurrentBoard(result).then((res) => {
         sessionStorage.setItem("user", result.username);
-        sessionStorage.setItem("color", result.color);
         sessionStorage.setItem("roomname", result.roomname);
         this.router.navigate(["board"]);
       });
@@ -59,28 +64,14 @@ export class HomeComponent implements OnInit {
   }
 
   getCurrentBoard(result) {
-    console.log(
-      encodeURIComponent(
-        "http://localhost:8080/games/" +
-          result.roomname +
-          "/join?" +
-          "&username=" +
-          result.username +
-          "&color=" +
-          result.color
-      )
-    );
     var promise = new Promise((resolve, reject) => {
-      console.log("here");
       this.http
         .get(
           "http://localhost:8080/games/" +
             result.roomname +
             "/join?" +
             "&username=" +
-            result.username +
-            "&color=" +
-            encodeURIComponent(result.color)
+            result.username
         )
         .subscribe(
           (res) => {
@@ -88,6 +79,7 @@ export class HomeComponent implements OnInit {
             let idx = res["game_instance"]["current_turn"];
             // console.log(res["game instance"]["AllPlayers"][idx]["UserName"]);
             sessionStorage.setItem("currUser", result.username);
+            sessionStorage.setItem("color", res["user"]["color"]);
             sessionStorage.setItem(
               "dimension",
               res["game_instance"]["dimension"]
@@ -95,6 +87,10 @@ export class HomeComponent implements OnInit {
             sessionStorage.setItem(
               "currTurn",
               res["game_instance"]["all_players"][0]["username"]
+            );
+            sessionStorage.setItem(
+              "currColor",
+              res["game_instance"]["all_players"][idx]["color"]
             );
             resolve(res);
           },
