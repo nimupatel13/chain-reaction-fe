@@ -89,10 +89,11 @@ export class CreateGame {
     private http: HttpClient,
     private dialog: MatDialog
   ) {}
-  players: string;
+  players = "2";
   dimension: string;
   username: string;
   Create() {
+    // this.dimension = this.dimension.split("x")[0];
     this.http
       .get(
         "http://localhost:8080/new?players_count=" +
@@ -103,10 +104,6 @@ export class CreateGame {
       .subscribe(
         (res) => {
           console.log(res);
-          const dialogBox = this.dialog.open(DialogOverviewExampleDialog, {
-            width: "500px",
-            data: { name: res["game_roomname"] },
-          });
           this.dialogRef.close({
             dimension: this.dimension,
             username: this.username,

@@ -4,11 +4,31 @@
 </mat-form-field>
 <br />
 <mat-form-field>
-  <input matInput placeholder="Board Dimension" [(ngModel)]="dimension" />
+  <mat-label>
+    Board Dimension
+  </mat-label>
+  <mat-select [(ngModel)]="dimension">
+    <mat-option
+      *ngFor="let item of [].constructor(7); let i = index"
+      [value]="i+3"
+      >{{i+3}}x{{i+3}}</mat-option
+    >
+  </mat-select>
 </mat-form-field>
 <br />
 <mat-form-field>
-  <input matInput placeholder="No of Players" [(ngModel)]="players" />
+  <mat-label>
+    Number of Players
+  </mat-label>
+  <mat-select [(ngModel)]="players">
+    <mat-option
+      *ngFor="let item of [].constructor(7); let i = index"
+      [value]="i+2"
+      >{{i+2}}</mat-option
+    >
+  </mat-select>
+
+  <!-- <input matInput placeholder="No of Players" [(ngModel)]="players" /> -->
 </mat-form-field>
 <div mat-dialog-actions>
   <button mat-button ngxClipboard (click)="Create()">

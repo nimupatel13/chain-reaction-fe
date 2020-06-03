@@ -86,12 +86,13 @@ import { Router } from "@angular/router";
 })
 export class GameBoardComponent implements OnInit {
   private ws: WebSocketSubject<any>;
-  constructor(private dialog: MatDialog, private router: Router) {
+
+  setupWebSocket() {
     let user = sessionStorage.getItem("user");
     let color = sessionStorage.getItem("color");
-    let room = sessionStorage.getItem("roomname");
+    this.room = sessionStorage.getItem("roomname");
     this.ws = new WebSocketSubject(
-      "ws://localhost:8080/games/" + room + "/play?username=" + user
+      "ws://localhost:8080/games/" + this.room + "/play?username=" + user
     );
 
     this.ws.subscribe(
@@ -101,8 +102,16 @@ export class GameBoardComponent implements OnInit {
       },
       (err) => console.log("Error from server...", err)
     );
+
+    if (this.ws.isStopped) {
+      this.setupWebSocket();
+    }
+  }
+  constructor(private dialog: MatDialog, private router: Router) {
+    this.setupWebSocket();
   }
   map = new Map();
+  room: string;
   async renderBoard(message) {
     console.log(message);
     if (message.msg_type == 2) {
